@@ -56,7 +56,8 @@
   .identity { font-family: var(--mono); font-size: 13.5px; color: var(--muted); background: var(--panel);
     border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; overflow-wrap: anywhere; margin: 0 0 22px; }
   .identity strong { color: var(--accent-2); font-weight: 600; }
-  .shots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .shots { display: grid; grid-template-columns: 1fr 1.25fr; gap: 14px; align-items: start; }
+  .shots .tall { grid-row: span 2; }
   figure { margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
   figcaption { font-size: 13px; color: var(--muted); padding: 10px 12px; }
   .steps { counter-reset: s; }
@@ -94,6 +95,7 @@
   .disclaimer { font-size: 12px; color: var(--dim); margin-top: 14px; border-top: 1px solid var(--line); padding-top: 12px; }
   @media (max-width: 820px) {
     .grid3, .shots { grid-template-columns: 1fr; }
+    .shots .tall { grid-row: auto; }
     .sub { font-size: 16px; }
     .logo small { display: none; }
   }
@@ -158,12 +160,12 @@
       $7,000.5100 &minus; $7,702.7511 + $126.0176 + $687.5893 = <strong>$111.3658</strong><br>
       $0.6218 cash + $110.7440 open positions = <strong>$111.3658</strong> &nbsp;&rarr;&nbsp; <strong>gap $0.00002</strong></p>
     <div class="shots">
-      <figure><img src="assets/koinly-wallets.png" data-fallback="assets/koinly-wallets.svg" alt="Koinly wallet view: 886 transactions, balance $111.37" loading="lazy" width="1200" height="750">
-        <figcaption>Wallet: 886 transactions, balance $111.37</figcaption></figure>
-      <figure><img src="assets/koinly-tax-2026.png" data-fallback="assets/koinly-tax-2026.svg" alt="Koinly 2026 tax summary: other gains $659.85, income $126.02, capital gains $0.00" loading="lazy" width="1200" height="750">
-        <figcaption>2026 tax summary: other gains, income, capital gains</figcaption></figure>
-      <figure><img src="assets/koinly-warnings.png" data-fallback="assets/koinly-warnings.svg" alt="Koinly warnings: none" loading="lazy" width="1200" height="750">
-        <figcaption>Warnings: none</figcaption></figure>
+      <figure class="tall"><img src="assets/koinly-tax-2026.png" data-fallback="assets/koinly-tax-2026.svg" alt="Koinly tax report for 2026: 772 transactions, capital gains $0.00, other gains $659.85, income $126.02" loading="lazy" width="1024" height="802">
+        <figcaption>Tax report 2026: capital gains $0.00, other gains $659.85, income $126.02</figcaption></figure>
+      <figure><img src="assets/koinly-wallets.png" data-fallback="assets/koinly-wallets.svg" alt="Koinly wallets: 886 transactions, total value $111.37" loading="lazy" width="2000" height="555">
+        <figcaption>Wallet: 886 transactions imported, total value $111.37</figcaption></figure>
+      <figure><img src="assets/koinly-warnings.png" data-fallback="assets/koinly-warnings.svg" alt="Koinly transactions filtered by the Missing purchase warning: no transactions" loading="lazy" width="2000" height="549">
+        <figcaption>&ldquo;Missing purchase&rdquo; warning filter: no transactions</figcaption></figure>
     </div>
   </section>
 
