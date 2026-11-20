@@ -92,6 +92,7 @@
   .row .btn { flex: 1; }
   .note { font-size: 13px; color: var(--dim); margin-top: 12px; min-height: 18px; }
   .note.ok { color: var(--accent-2); } .note.err { color: var(--err); }
+  .hp { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
   .disclaimer { font-size: 12px; color: var(--dim); margin-top: 14px; border-top: 1px solid var(--line); padding-top: 12px; }
   @media (max-width: 820px) {
     .grid3, .shots { grid-template-columns: 1fr; }
@@ -160,11 +161,11 @@
       $7,000.5100 &minus; $7,702.7511 + $126.0176 + $687.5893 = <strong>$111.3658</strong><br>
       $0.6218 cash + $110.7440 open positions = <strong>$111.3658</strong> &nbsp;&rarr;&nbsp; <strong>gap $0.00002</strong></p>
     <div class="shots">
-      <figure class="tall"><img src="assets/koinly-tax-2026.png" data-fallback="assets/koinly-tax-2026.svg" alt="Koinly tax report for 2026: 772 transactions, capital gains $0.00, other gains $659.85, income $126.02" loading="lazy" width="1024" height="802">
+      <figure class="tall"><img src="assets/koinly-tax-2026.png" data-fallback="assets/koinly-tax-2026.svg" alt="Koinly tax report for 2026: 772 transactions, capital gains $0.00, other gains $659.85, income $126.02" width="1024" height="802">
         <figcaption>Tax report 2026: capital gains $0.00, other gains $659.85, income $126.02</figcaption></figure>
-      <figure><img src="assets/koinly-wallets.png" data-fallback="assets/koinly-wallets.svg" alt="Koinly wallets: 886 transactions, total value $111.37" loading="lazy" width="2000" height="555">
+      <figure><img src="assets/koinly-wallets.png" data-fallback="assets/koinly-wallets.svg" alt="Koinly wallets: 886 transactions, total value $111.37" width="2000" height="555">
         <figcaption>Wallet: 886 transactions imported, total value $111.37</figcaption></figure>
-      <figure><img src="assets/koinly-warnings.png" data-fallback="assets/koinly-warnings.svg" alt="Koinly transactions filtered by the Missing purchase warning: no transactions" loading="lazy" width="2000" height="549">
+      <figure><img src="assets/koinly-warnings.png" data-fallback="assets/koinly-warnings.svg" alt="Koinly transactions filtered by the Missing purchase warning: no transactions" width="2000" height="549">
         <figcaption>&ldquo;Missing purchase&rdquo; warning filter: no transactions</figcaption></figure>
     </div>
   </section>
@@ -249,6 +250,8 @@
     <input type="hidden" name="cta" id="cta">
     <input type="hidden" name="product" value="pm-koinly">
     <input type="hidden" name="offer" value="2026-export-39">
+    <div class="hp" aria-hidden="true"><label for="hp_note">Leave this field empty</label>
+      <input id="hp_note" name="hp_note" type="text" tabindex="-1" autocomplete="off"></div>
     <div class="row">
       <button class="btn" type="button" id="cancel">Cancel</button>
       <button class="btn primary" type="submit" id="submit">Request access</button>
@@ -259,10 +262,21 @@
 </dialog>
 
 <script>
-  // Form endpoint (Formspree / Tally / Getform URL that accepts POSTed form data).
-  // Example: "https://formspree.io/f/xxxxxxx". Leave "" to disable sign-ups: the form then shows
-  // a "not connected yet" message instead of failing or pretending to succeed.
-  const WAITLIST_ENDPOINT = "https://formspree.io/f/mbgoajvk";
+  // Waitlist endpoint: the Google Apps Script web app URL ("https://script.google.com/macros/s/.../exec").
+  // It answers {"ok": true} as JSON. Leave "" to disable sign-ups: the form then shows a
+  // "not connected yet" message instead of failing or pretending to succeed.
+  const WAITLIST_ENDPOINT = "";
+
+  // URL-encoded body + this Content-Type keep the POST a CORS "simple" request (no preflight).
+  function encodePairs(pairs, skip) {
+    return pairs.filter(function (kv) { return (skip || []).indexOf(kv[0]) === -1; })
+      .map(function (kv) { return encodeURIComponent(kv[0]) + "=" + encodeURIComponent(String(kv[1])); })
+      .join("&");
+  }
+
+  function accepted(status, reply) {
+    return status >= 200 && status < 300 && !!reply && reply.ok === true;
+  }
 
   function queryParam(search, key) {
     const parts = String(search || "").replace(/^\?/, "").split("&");
@@ -332,12 +346,13 @@
       }
       const pains = Array.prototype.map.call(form.querySelectorAll("input[name=pain]:checked"), function (c) { return c.value; });
       document.getElementById("main_pain").value = joinPains(pains);
-      const data = new FormData(form);
-      data.delete("pain");
+      const body = encodePairs(Array.from(new FormData(form).entries()), ["pain"]);
       submit.disabled = true;
       try {
-        const res = await fetch(WAITLIST_ENDPOINT, { method: "POST", body: data, headers: { "Accept": "application/json" } });
-        if (!res.ok) throw new Error("HTTP " + res.status);
+        const res = await fetch(WAITLIST_ENDPOINT, { method: "POST", body: body,
+          headers: { "Content-Type": "application/x-www-form-urlencoded" } });
+        const reply = await res.json().catch(function () { return null; });
+        if (!accepted(res.status, reply)) throw new Error((reply && reply.error) || "HTTP " + res.status);
         say("You're on the January list. We'll email you when your batch opens.", "ok");
         form.reset();
       } catch (err) {
