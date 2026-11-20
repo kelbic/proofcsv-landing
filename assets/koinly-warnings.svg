@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750" role="img" aria-label="Placeholder: Koinly · Warnings screenshot">
+  <rect width="1200" height="750" rx="24" fill="#121318"/>
+  <rect x="24" y="24" width="1152" height="702" rx="16" fill="none" stroke="#2b2f3a" stroke-width="3" stroke-dasharray="14 12"/>
+  <text x="600" y="330" text-anchor="middle" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif" font-size="44" font-weight="700" fill="#e7e8ec">Koinly · Warnings</text>
+  <text x="600" y="400" text-anchor="middle" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif" font-size="30" fill="#9a9fad">0 warnings · 0 missing purchase history</text>
+  <text x="600" y="470" text-anchor="middle" font-family="ui-monospace,Menlo,Consolas,monospace" font-size="24" fill="#6b7080">screenshot placeholder: assets/koinly-warnings.png</text>
+</svg>
